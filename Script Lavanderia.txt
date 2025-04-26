@@ -1,0 +1,99 @@
+-- Desactivar temporalmente las comprobaciones de unicidad y claves foráneas
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS;
+-- Guarda en la variable @OLD_UNIQUE_CHECKS el valor actual de la comprobación de unicidad.
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS;
+-- Guarda en la variable @OLD_FOREIGN_KEY_CHECKS el valor actual de las comprobaciones de claves foráneas.
+SET @OLD_SQL_MODE = @@SQL_MODE;
+-- Guarda en la variable @OLD_SQL_MODE el modo SQL actual (configuración del servidor).
+SET UNIQUE_CHECKS = 0;
+-- Desactiva las comprobaciones de unicidad para evitar errores durante la creación de tablas.
+SET FOREIGN_KEY_CHECKS = 0;
+-- Desactiva las comprobaciones de claves foráneas para permitir crear las tablas sin importar el orden de las relaciones.
+
+-- Crear la base de datos si no existe y seleccionarla
+CREATE SCHEMA IF NOT EXISTS `lavanderia` DEFAULT CHARACTER SET utf8 COLLATE utf8_spanish_ci;
+-- Crea la base de datos (esquema) "dbsistema" si no existe, definiendo que use el conjunto de caracteres UTF8
+-- y la intercalación (collation) adecuada para el español (utf8_spanish_ci).
+USE `lavanderia`;
+-- Selecciona la base de datos "dbsistema" para que las siguientes instrucciones se ejecuten en este esquema.
+
+-- -----------------------------------------------------
+-- Tabla: administrador
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `administrador` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`nombre` VARCHAR(20) NOT NULL,
+`apellido` VARCHAR(20) NOT NULL,
+`numIdentificacion` VARCHAR (30) NOT NULL,
+`email` VARCHAR (30) NOT NULL,
+`rol` VARCHAR (20) NOT NULL,
+`claveIngreso` VARCHAR (20) NOT NULL,
+`sueldo` DECIMAL (11,2) NOT NULL,
+ PRIMARY KEY (`id`),
+UNIQUE INDEX `nombre_UNIQUE` (`nombre` ASC)
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Tabla: empleado
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `empleado` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`administrador_id` INT NOT NULL,
+`nombre` VARCHAR(20) NULL,
+`apellido` VARCHAR(20) NOT NULL,
+`numIdentificacion` VARCHAR (20) NOT NULL,
+`email` VARCHAR (30) NOT NULL,
+`rol` VARCHAR(20) NULL,
+`claveIngreso` VARCHAR(50) NULL,
+`sueldo` DECIMAL (11,2) NOT NULL,
+PRIMARY KEY (`id`),
+UNIQUE INDEX `nombre_UNIQUE` (`nombre` ASC),
+UNIQUE INDEX `apellido_UNIQUE` (`apellido` ASC),
+UNIQUE INDEX `numIdentificacion_UNIQUE` (`numIdentificacion` ASC),
+UNIQUE INDEX `email_UNIQUE` (`email` ASC),
+UNIQUE INDEX `rol_UNIQUE` (`rol` ASC),
+UNIQUE INDEX `claveIngreso_UNIQUE` (`claveIngreso` ASC),
+UNIQUE INDEX `sueldo_UNIQUE` (`sueldo` ASC),
+INDEX `fk_empleado_administrador_idx` (`administrador_id` ASC),
+CONSTRAINT `fk_empleado_administrador`
+FOREIGN KEY (`administrador_id`)
+REFERENCES `administrador` (`id`)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Tabla: persona
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `persona` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`nombreCliente` VARCHAR(20) NOT NULL,
+`apellidoCliente` VARCHAR(30) NOT NULL,
+`telefonoCliente` VARCHAR(30) NOT NULL,
+`numeroIdentificadorPedido` INT (30) NOT NULL,
+`nombrePedido` VARCHAR(30) NOT NULL,
+`descripcionPedido` VARCHAR(40) NOT NULL,
+`costoPedido` DECIMAL (20,2) NOT NULL, 
+`diaPedidoDejado` INT (10) NOT NULL,
+`mesPedidoDejado` INT (10) NOT NULL,
+`anioPedidoDejado` INT (10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Tabla: pedido
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `pedido` (
+`id` INT NOT NULL AUTO_INCREMENT,
+`nombreCliente` VARCHAR(20) NOT NULL,
+`apellidoCliente` VARCHAR(30) NOT NULL,
+`telefonoCliente` VARCHAR(30) NOT NULL,
+`numeroIdentificadorPedido` INT (30) NOT NULL,
+`nombrePedido` VARCHAR(30) NOT NULL,
+`descripcionPedido` VARCHAR(40) NOT NULL,
+`costoPedido` DECIMAL (20,2) NOT NULL, 
+`diaPedidoDejado` INT (10) NOT NULL,
+`mesPedidoDejado` INT (10) NOT NULL,
+`anioPedidoDejado` INT (10) NOT NULL,
+PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
